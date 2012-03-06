@@ -2,3 +2,199 @@ topkit Pages Module
 ====================
 
 ver:0.0.1
+
+The Pages module is a combination of a templating library and a
+dynamic page content generation tool. Elements of the templating
+portion of this package were inspired by the fine work of [Phil
+Sturgeon](https://github.com/philsturgeon/codeigniter-template).
+
+### Dependencies
+
+* [php-activerecord](https://github.com/topicdesign/php-activerecord-spark)
+
+Pages is designed as one of the core modules included in the
+[topkit][tk] framework. It may work for your other projects, but that is
+not our intention.
+
+### Initialization
+
+It is recommended to auto-load the pages module.
+
+    $autoload['packages'] = array(APPPATH.'third_party/pages');
+    $autoload['libraries'] = array('page');
+
+The library will use the `config/pages.php` file be default, but you can
+overload it.
+
+    // pass a config variable to the constructor
+    $this->load->library('page', $config);
+
+    // manually initialize
+    $this->page->initialize($config);
+
+## Config
+
+| Parameter       | Default       | Description                                                    |
+| --------        | -------       | -----------                                                    |
+| layout_dir      | views/layouts | path to layouts directory (relative to APPPATH)                |
+| default_layout  | default       | file name of default layout file                               |
+| title_separator | ' &#124; '    | string to use to separate concatenated titles                  |
+| prepend_title   | TRUE          | should new title strings be prepended                          |
+| extract_data    | TRUE          | should we extract the data to local variables in layouts/views |
+
+# Usage
+
+## Layouts
+
+You change which layout file to use in the build phase by setting a new path.
+
+    // set the layout to 'views/layouts/simple.php'
+    $this->page->layout = 'simple';
+
+## Title
+
+You can set the `title` property to a simple string.
+
+    $this->page->title = 'My Awesome Site';
+
+Alternatively, you can pass multiple strings and allow the library to
+combine them on output using the specified `separator`. *You can toggle
+prepend/append via the config option.*
+
+    // initialize the title (maybe in a hook)
+    $this->page->title('Site Title');
+
+    // get more specific in the controller
+    $this->page->title('News'); # News | Site Title
+
+    // and really specific in the method
+    $this->page->title('Article Title'); # Article | News | Site Title
+
+You can also pass an array of strings, they will be inserted in the
+order provided.
+
+    $this->page->title(array('One', 'Two', 'Three'));
+    // One | Two | Three
+
+By default, new strings are prepended to the title, but you can replace
+the current contents by passing `TRUE` as a second parameter.
+
+    $this->page->title('Prepend Title');
+    $this->page->title('Replace Title', TRUE); 
+    
+
+### Output the title
+
+Treat the built up `title` as a normal property on the `Page` object. 
+  
+    echo $this->page->title;
+    // Article Title | News | Site Title
+
+### Clearing a title
+
+If you want to over-write any 'built up' title strings, just unset the
+`title` before setting it.
+
+    // title is all junked up
+    unset($this->page->title);
+
+    // now you're ready to start setting your first (only) new string
+    $this->page->title = 'All New Title';
+
+## Partials
+
+Partials allow you to store views in variables to use in your layout
+files, or other views.
+
+### Setting partials
+
+Typically you will be setting partials from view files, stored in the
+default `APPPATH.'views/'` directory.
+
+    // create a partial called 'header'
+    $this->page->partial('header', '_partials/header');
+
+    // pass some data to the view
+    $data = array('logged_in'=>TRUE);
+    $this->page->partial('footer', '_partials/footer', $data);
+
+There may be times where you want to pass a string directly to a partial.
+
+    $this->page->partial('copy', '<span>&copy;'.date('Y').'</span>');
+    $this->page->partial('tweet', get_recent_tweet());
+
+### Getting partials
+
+To use a stored partial in your output, simply look it up using the
+assigned name. If the partial does not exist, it will return `FALSE`,
+allowing you to echo unset partials without fear of PHP errors.
+
+    // output the contents of the partial
+    echo $this->page->partial('header');
+
+    // assign the partial to a new variable
+    $tweet = $this->page->partial('tweet');
+
+    // no harm in echoing unset partials
+    echo $this->page->partial('does_not_exist');
+
+    echo partial('footer');
+
+## Passing Data to views/layouts
+
+CodeIgniter has a method for setting random data using
+`$this->output->set_vars()`, and you can pass an array to the `partial`
+and `build` methods. As a convenience, the `Page` module also provides
+an interface for storing arbitrary data.
+
+    // set any string key to any value
+    $this->page->data('username', 'John');
+    $this->page->data('user', $user);
+
+    // you can also pass arrays
+    $user_data = array(
+        'username'  => 'John',
+        'user'      => $user
+    );
+    $this->page->data($user_data);
+
+Any data set using this method is automatically extracted into rendered
+views for direct access. You can configure the `Page` module to **not**
+extract stored data into local variables, which may be preferable in
+some situations to avoid variable collisions.
+
+    // in the layout file, access properties dircectly
+    echo $username; // John
+    echo $user->created->format('Y'); // 2012
+
+    // or you can access the data from the page object
+    echo $this->page->data('username'); // John
+
+    $user = $this->page->data('user');
+    echo $user->created->format('Y'); // 2012
+    
+
+# Document Properties
+
+**Work in Progress**
+
+The *Pages* package includes a generic `Document` model that map to
+URIs. When the `Page` library is instantiated, it attempts to populate
+it's primary properties automatically based on the current URI. It also provides a
+
+    CREATE TABLE `documents` (
+       `uri`            varchar(120)   NOT NULL,
+       `title`          varchar(120)   NOT NULL,
+       `slug`           varchar(120)   NOT NULL,
+       `description`    text           NOT NULL,
+       `keywords`       text           NOT NULL,
+       `content`        text           NOT NULL,
+       `view`           varchar(60)    NOT NULL,
+       `published_at`   datetime       DEFAULT NULL,
+       `created_at`     datetime       DEFAULT NULL,
+       `updated_at`     datetime       DEFAULT NULL,
+        PRIMARY KEY (`uri`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+[tk]: http://github.com/topicdesign/topkit
+
