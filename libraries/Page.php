@@ -41,6 +41,13 @@ class Page {
 	protected $title_segs = array();
 
 	/**
+	 * Partials storage
+	 *
+	 * @var array
+	 **/
+	protected $partials = array();
+
+	/**
 	 * local instance of CodeIgniter
 	 *
 	 * @var object
@@ -185,6 +192,7 @@ class Page {
             $this->title_segs = array();
         }
         $this->title_segs = array_merge($this->title_segs, $segs);
+        return $this;
     }
 
     // --------------------------------------------------------------------
@@ -203,14 +211,80 @@ class Page {
         {
             $segs = array_reverse($segs);
         }
-        $title = array_shift($segs);
-        foreach ($segs as $s)
+        return implode($this->title_separator, $segs);
+    }
+    
+    // --------------------------------------------------------------------
+
+    /**
+     * partial
+     *
+     * @access  public 
+     * @param   $name, $view, $data
+     * @return  void
+     **/
+    public function partial($name, $view=NULL, $data=array())
+    {
+        if (is_null($view) && empty($data))
         {
-            $title .= $this->title_separator . $s;
+            return $this->get_partial($name);
         }
-        return $title;
+        // determine if passed view or injecting string
+        $lines = explode(PHP_EOL, $view);
+        if (count($lines) == 1 && is_file(APPPATH.'views/'.$lines[0].'.php'))
+        {
+            $this->partials[$name] = array(
+                'view'  => $view,
+                'data'  => $data
+            );
+        }
+        else
+        {
+            $this->partials[$name] = $view;
+        }
     }
 
+    /**
+     * get_partial
+     *
+     * @access  protected 
+     * @param   $name
+     * @return  string
+     **/
+    protected function get_partial($name)
+    {
+        if ( ! isset($this->partials[$name]))
+        {
+            return FALSE;
+        }
+        if (is_string($this->partials[$name]))
+        {
+            return $this->partials[$name];
+        }
+        $p = $this->partials[$name]; 
+        return $this->ci->load->view($p['view'], $p['data'], TRUE);
+    }
+
+    /**
+     * find_view
+     *
+     * @access  private 
+     * @param   $view
+     * @return  string
+     **/
+    private function find_view($view)
+    {
+        //FIXME: do a smart view lookup
+        foreach ($this->view_dirs as $dir)
+        {
+            $path = $dir.$view.'.php';
+            if (is_file(APPPATH.$path))
+            {
+                return $path;
+            }
+        }
+        return FALSE;
+    }
     // --------------------------------------------------------------------
 
 } // END Page class
