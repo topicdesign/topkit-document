@@ -15,40 +15,30 @@
 
 class Page {
 
-	/**
-	 * directory of layout files (relative to APPPATH)
-	 *
-	 * @var string
-	 **/
-	protected $layout_dir = 'views/layouts';
-
-    /**
-     * file name of default layout file
-     *
-     * @var string
-     **/
+    /*
+    | -------------------------------------------------------------------------
+    | Config
+    | -------------------------------------------------------------------------
+    */
+    
+	protected $layout_dir = 'views/layouts/';
     protected $layout = 'default';
-
-    /**
-     * string to use to separate concatenated titles
-     *
-     * @var string
-     **/
     protected $title_separator = ' &#124; ';
-
-    /**
-     * should new title strings be prepended
-     *
-     * @var bool
-     **/
     protected $prepend_title = TRUE;
-
-    /**
-     * should we extract the data to local variables in layouts/views)
-     *
-     * @var string
-     **/
     protected $extract_data = TRUE;
+
+    /*
+    | -------------------------------------------------------------------------
+    | Properties
+    | -------------------------------------------------------------------------
+    */
+
+	/**
+	 * Page Title segments
+	 *
+	 * @var array
+	 **/
+	protected $title_segs = array();
 
 	/**
 	 * local instance of CodeIgniter
@@ -68,7 +58,7 @@ class Page {
 	 **/
 	public function __construct($config = array())
 	{
-		//$this->ci = get_instance();
+        $this->ci = get_instance();
 		if ( ! empty($config))
 		{
 			$this->initialize($config);
@@ -146,15 +136,79 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
-     * set_layout
+     * set new path to layout file
+     *
+     * @access  protected 
+     * @param   string      $view   path to file from $layout_dir
+     * @return  void
+     **/
+    protected function set_layout($view)
+    {
+        if ( ! is_file(APPPATH.$this->layout_dir.$view.'.php'))
+        {
+            return;
+        }
+        $this->layout = $view;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * replace title with new string
      *
      * @access  protected 
      * @param   $name
      * @return  void
      **/
-    protected function set_layout($name)
+    protected function set_title($title)
     {
-        $this->layout = $name;
+        $this->title($title, TRUE);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * someFunc
+     *
+     * @access  protected 
+     * @param   
+     * @return  void
+     **/
+    public function title($segs, $replace=FALSE)
+    {
+        if (is_string($segs))
+        {
+            $segs = array($segs);
+        }
+        if ($replace)
+        {
+            $this->title_segs = array();
+        }
+        $this->title_segs = array_merge($this->title_segs, $segs);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * get_title
+     *
+     * @access  protected 
+     * @param   
+     * @return  void
+     **/
+    protected function get_title()
+    {
+        $segs = $this->title_segs;
+        if ($this->prepend_title)
+        {
+            $segs = array_reverse($segs);
+        }
+        $title = array_shift($segs);
+        foreach ($segs as $s)
+        {
+            $title .= $this->title_separator . $s;
+        }
+        return $title;
     }
 
     // --------------------------------------------------------------------

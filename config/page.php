@@ -7,10 +7,11 @@
 
 /**
  * path to layouts directory (relative to APPPATH)
+ * -- include trailing slash!
  *
  * @var string
  **/
-$config['layout_dir'] = 'views/layouts';
+$config['layout_dir'] = 'views/layouts/';
 
 /**
  * file name of default layout file
