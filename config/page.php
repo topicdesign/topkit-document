@@ -17,7 +17,7 @@ $config['layout_dir'] = 'views/layouts';
  *
  * @var string
  **/
-$config['default_layout'] = 'default';
+$config['layout'] = 'default';
 
 /**
  * string to use to separate concatenated titles

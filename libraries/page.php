@@ -27,7 +27,7 @@ class Page {
      *
      * @var string
      **/
-    protected $default_layout = 'default';
+    protected $layout = 'default';
 
     /**
      * string to use to separate concatenated titles
@@ -68,13 +68,11 @@ class Page {
 	 **/
 	public function __construct($config = array())
 	{
-		$this->ci = get_instance();
-		
+		//$this->ci = get_instance();
 		if ( ! empty($config))
 		{
 			$this->initialize($config);
 		}
-
         log_message('debug', get_class() . ' Library Initialized');
 	}
 	
@@ -88,18 +86,14 @@ class Page {
 	 * @return	void
 	 */
 	public function initialize($config = array())
-	{
+    {
+        if ( ! is_array($config))
+        {
+            return FALSE;
+        }
 		foreach ($config as $name => $value)
 		{
-            $method = 'set_'.$name;
-            if (method_exists($this,$method))
-            {
-                $this->$method($value);
-            }
-            else
-            {
-                $this->$name = $value;
-            }
+            $this->__set($name, $value);
 		}
     }
 
@@ -112,7 +106,7 @@ class Page {
      * @param   $name
      * @return  void
      **/
-    public __get($name)
+    public function __get($name)
     {
         $method = 'get_'.$name;
         if (method_exists($this,$method))
@@ -136,7 +130,7 @@ class Page {
      *
      * @return  void
      **/
-    public __set($name, $value)
+    public function __set($name, $value)
     {
         $method = 'set_'.$name;
         if (method_exists($this,$method))
@@ -147,6 +141,20 @@ class Page {
         {
             $this->$name = $value;
         }
+    }
+    
+    // --------------------------------------------------------------------
+
+    /**
+     * set_layout
+     *
+     * @access  protected 
+     * @param   $name
+     * @return  void
+     **/
+    protected function set_layout($name)
+    {
+        $this->layout = $name;
     }
 
     // --------------------------------------------------------------------
