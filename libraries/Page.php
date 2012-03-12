@@ -21,11 +21,12 @@ class Page {
     | -------------------------------------------------------------------------
     */
     
-	protected $layout_dir = 'views/layouts/';
+	protected $layout_dir = 'layouts/';
     protected $layout = 'default';
     protected $title_separator = ' &#124; ';
     protected $prepend_title = TRUE;
     protected $extract_data = TRUE;
+	protected $cache_lifetime = 0;
 
     /*
     | -------------------------------------------------------------------------
@@ -46,6 +47,20 @@ class Page {
 	 * @var array
 	 **/
 	protected $partials = array();
+
+	/**
+	 * Data storage
+	 *
+	 * @var array
+	 **/
+	protected $data = array();
+
+	/**
+	 * Page content
+	 *
+	 * @var string
+	 **/
+	protected $content = '';
 
 	/**
 	 * local instance of CodeIgniter
@@ -151,7 +166,7 @@ class Page {
      **/
     protected function set_layout($view)
     {
-        if ( ! is_file(APPPATH.$this->layout_dir.$view.'.php'))
+        if ( ! is_file(APPPATH.'views/'.$this->layout_dir.$view.'.php'))
         {
             return;
         }
@@ -261,31 +276,109 @@ class Page {
         {
             return $this->partials[$name];
         }
-        $p = $this->partials[$name]; 
-        return $this->ci->load->view($p['view'], $p['data'], TRUE);
+        extract($this->partials[$name]);
+        if ($this->extract_data)
+        {
+            $data = array_merge($this->data, $data);
+        }
+        return $this->ci->load->view($view, $data, TRUE);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * data
+     *
+     * @access  public 
+     * @param   $name, $value=NULL
+     * @return  mixed
+     **/
+    public function data($name=NULL, $value=NULL)
+    {
+        if (is_null($name))
+        {
+            return $this->data;
+        }
+        if (is_string($name) && is_null($value))
+        {
+            if ( ! isset($this->data[$name]))
+            {
+                return NULL;
+            }
+            else
+            {
+                return $this->data[$name];
+            }
+        }
+        // setter
+        if (is_string($name))
+        {
+            $name = array($name=>$value);
+        }
+        foreach ($name as $key => $value)
+        {
+            $this->data[$key] = $value;
+        }
+        return $this; 
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * generate_title
+     *
+     * @access  public 
+     * @param   
+     * @return  void
+     **/
+    private function generate_title()
+    {
+        $this->title = 'generated title';
     }
 
     /**
-     * find_view
+     * build the final output
      *
-     * @access  private 
-     * @param   $view
-     * @return  string
+     * @access  public 
+     * @param   string      $view
+     * @param   array       $data
+     * @param   bool        $return
+     * @return  mixed
      **/
-    private function find_view($view)
+    public function build($view, $data = array(), $return = FALSE)
     {
-        //FIXME: do a smart view lookup
-        foreach ($this->view_dirs as $dir)
+        if ($this->extract_data)
         {
-            $path = $dir.$view.'.php';
-            if (is_file(APPPATH.$path))
-            {
-                return $path;
-            }
+            $data = array_merge($this->data, $data);
         }
-        return FALSE;
+        // ensure a title exists
+        if ( ! $this->get_title())
+        {
+            $this->generate_title();
+        }
+        // Cache bits imported from Phil Sturgeon's Template Lib
+		// Disable sodding IE7's constant cacheing!!
+		$this->ci->output->set_header('Expires: Sat, 01 Jan 2000 00:00:01 GMT');
+		$this->ci->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
+		$this->ci->output->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0');
+		$this->ci->output->set_header('Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+		$this->ci->output->set_header('Pragma: no-cache');
+		// Let CI do the caching instead of the browser
+		$this->ci->output->cache($this->cache_lifetime);
+        // build the requested output
+        $output = $this->content = $this->ci->load->view($view, $data, TRUE);
+        // wrap in a layout?
+        if ($this->layout)
+        {
+            $output = $this->ci->load->view($this->layout_dir.$this->layout, NULL, TRUE);
+        }
+        // returned as string or output to browser
+        if ($return)
+        {
+            return $output;
+        }
+        $this->ci->output->set_output($output);
     }
-    // --------------------------------------------------------------------
 
 } // END Page class
 // --------------------------------------------------------------------

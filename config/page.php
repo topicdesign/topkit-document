@@ -11,7 +11,7 @@
  *
  * @var string
  **/
-$config['layout_dir'] = 'views/layouts/';
+$config['layout_dir'] = 'layouts/';
 
 /**
  * file name of default layout file
@@ -40,6 +40,13 @@ $config['prepend_title'] = TRUE;
  * @var string
  **/
 $config['extract_data'] = TRUE;
+
+/**
+ * Minutes that cache will be alive for
+ *
+ * @var integer
+ **/
+$config['cache_lifetime'] = 0;
 
 // --------------------------------------------------------------------
 /* End of file pages.php */
