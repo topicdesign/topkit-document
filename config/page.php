@@ -35,7 +35,7 @@ $config['title_separator'] = ' &#124; ';
 $config['prepend_title'] = TRUE;
 
 /**
- * should we extract the data to local variables in layouts/views)
+ * should we extract the data to local variables in layouts/views
  *
  * @var string
  **/

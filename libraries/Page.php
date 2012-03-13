@@ -115,8 +115,8 @@ class Page {
      * __get
      *
      * @access  public 
-     * @param   $name
-     * @return  void
+     * @param   string      $name
+     * @return  mixed
      **/
     public function __get($name)
     {
@@ -127,7 +127,7 @@ class Page {
         }
         else
         {
-            return $this->$name;
+            return $this->data($name);
         }
     }
 
@@ -137,9 +137,8 @@ class Page {
      * __set
      *
      * @access  public 
-     * @param   $name
-     * @param   $value
-     *
+     * @param   string      $name
+     * @param   mixed       $value
      * @return  void
      **/
     public function __set($name, $value)
@@ -151,8 +150,22 @@ class Page {
         }
         else
         {
-            $this->$name = $value;
+            $this->data($name, $value);
         }
+    }
+    
+    // --------------------------------------------------------------------
+
+    /**
+     * get page content
+     *
+     * @access  protected 
+     * @param   void 
+     * @return  string
+     **/
+    protected function get_content()
+    {
+        return $this->content;
     }
     
     // --------------------------------------------------------------------
@@ -161,11 +174,15 @@ class Page {
      * set new path to layout file
      *
      * @access  protected 
-     * @param   string      $view   path to file from $layout_dir
+     * @param   string      $view
      * @return  void
      **/
-    protected function set_layout($view)
+    protected function set_layout($view = NULL)
     {
+        if (is_null($view))
+        {
+            $this->layout = NULL;
+        }
         if ( ! is_file(APPPATH.'views/'.$this->layout_dir.$view.'.php'))
         {
             return;
@@ -179,7 +196,7 @@ class Page {
      * replace title with new string
      *
      * @access  protected 
-     * @param   $name
+     * @param   string      $title
      * @return  void
      **/
     protected function set_title($title)
@@ -190,13 +207,14 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
-     * someFunc
+     * set title or title segments
      *
      * @access  protected 
-     * @param   
-     * @return  void
+     * @param   mixed       $segs
+     * @param   bool        $replace 
+     * @return  object
      **/
-    public function title($segs, $replace=FALSE)
+    public function title($segs, $replace = FALSE)
     {
         if (is_string($segs))
         {
@@ -213,11 +231,11 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
-     * get_title
+     * get title
      *
      * @access  protected 
-     * @param   
-     * @return  void
+     * @param   void 
+     * @return  string
      **/
     protected function get_title()
     {
@@ -232,13 +250,15 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
-     * partial
+     * get/set partial
      *
      * @access  public 
-     * @param   $name, $view, $data
-     * @return  void
+     * @param   string      $name
+     * @param   string      $view
+     * @param   array       $data
+     * @return  mixed
      **/
-    public function partial($name, $view=NULL, $data=array())
+    public function partial($name, $view = NULL, $data = array())
     {
         if (is_null($view) && empty($data))
         {
@@ -257,13 +277,16 @@ class Page {
         {
             $this->partials[$name] = $view;
         }
+        return $this;
     }
 
+    // --------------------------------------------------------------------
+
     /**
-     * get_partial
+     * get rendered partial
      *
      * @access  protected 
-     * @param   $name
+     * @param   string      $name
      * @return  string
      **/
     protected function get_partial($name)
@@ -287,13 +310,14 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
-     * data
+     * get/set data to page object
      *
      * @access  public 
-     * @param   $name, $value=NULL
+     * @param   string      $name
+     * @param   mixed       $value
      * @return  mixed
      **/
-    public function data($name=NULL, $value=NULL)
+    public function data($name = NULL, $value = NULL)
     {
         if (is_null($name))
         {
@@ -325,16 +349,32 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
+     * get all page data
+     *
+     * @access  protected 
+     * @param   void
+     * @return  array
+     **/
+    protected function get_data()
+    {
+        return $this->data;
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
      * generate_title
      *
-     * @access  public 
-     * @param   
+     * @access  private 
+     * @param   void 
      * @return  void
      **/
     private function generate_title()
     {
         $this->title = 'generated title';
     }
+
+    // --------------------------------------------------------------------
 
     /**
      * build the final output
@@ -357,14 +397,14 @@ class Page {
             $this->generate_title();
         }
         // Cache bits imported from Phil Sturgeon's Template Lib
-		// Disable sodding IE7's constant cacheing!!
-		$this->ci->output->set_header('Expires: Sat, 01 Jan 2000 00:00:01 GMT');
-		$this->ci->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
-		$this->ci->output->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0');
-		$this->ci->output->set_header('Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
-		$this->ci->output->set_header('Pragma: no-cache');
-		// Let CI do the caching instead of the browser
-		$this->ci->output->cache($this->cache_lifetime);
+        $this->ci->output
+            ->set_header('Expires: Sat, 01 Jan 2000 00:00:01 GMT')
+		    ->set_header('Cache-Control: no-store, no-cache, must-revalidate')
+		    ->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0')
+		    ->set_header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT' )
+		    ->set_header('Pragma: no-cache')
+            ->cache($this->cache_lifetime)
+            ;
         // build the requested output
         $output = $this->content = $this->ci->load->view($view, $data, TRUE);
         // wrap in a layout?
@@ -379,6 +419,8 @@ class Page {
         }
         $this->ci->output->set_output($output);
     }
+
+    // --------------------------------------------------------------------
 
 } // END Page class
 // --------------------------------------------------------------------
