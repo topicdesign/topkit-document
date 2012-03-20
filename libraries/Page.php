@@ -1,16 +1,16 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Page Class
  *
  * Templating and Layout Abstraction
  *
- * @package		CodeIgniter
- * @subpackage	Libraries
- * @category	Templating
+ * @package     CodeIgniter
+ * @subpackage  Libraries
+ * @category    Templating
  * @author      Topic Deisgn
- * @license		http://creativecommons.org/licenses/BSD/
- * @version		0.0.1
+ * @license     http://creativecommons.org/licenses/BSD/
+ * @version     0.0.1
  */
 
 class Page {
@@ -20,13 +20,13 @@ class Page {
     | Config
     | -------------------------------------------------------------------------
     */
-    
-	protected $layout_dir = 'layouts/';
+
+    protected $layout_dir = 'layouts/';
     protected $layout = 'default';
     protected $title_separator = ' &#124; ';
     protected $prepend_title = TRUE;
     protected $extract_data = TRUE;
-	protected $cache_lifetime = 0;
+    protected $cache_lifetime = 0;
 
     /*
     | -------------------------------------------------------------------------
@@ -34,79 +34,79 @@ class Page {
     | -------------------------------------------------------------------------
     */
 
-	/**
-	 * Page Title segments
-	 *
-	 * @var array
-	 **/
-	protected $title_segs = array();
-
-	/**
-	 * Partials storage
-	 *
-	 * @var array
-	 **/
-	protected $partials = array();
-
-	/**
-	 * Data storage
-	 *
-	 * @var array
-	 **/
-	protected $data = array();
-
-	/**
-	 * Page content
-	 *
-	 * @var string
-	 **/
-	protected $content = '';
-
-	/**
-	 * local instance of CodeIgniter
-	 *
-	 * @var object
-	 **/
-	private $ci;
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * constructor
-	 *
-	 * @access	public 
-	 * @param	void
-	 * @return	void
-	 **/
-	public function __construct($config = array())
-	{
-        $this->ci = get_instance();
-		if ( ! empty($config))
-		{
-			$this->initialize($config);
-		}
-        log_message('debug', get_class() . ' Library Initialized');
-	}
-	
-	// --------------------------------------------------------------------
-    
     /**
-	 * initialize config
-	 *
-	 * @access	public
-	 * @param	array   $config
-	 * @return	void
-	 */
-	public function initialize($config = array())
+     * Page Title segments
+     *
+     * @var array
+     **/
+    protected $title_segs = array();
+
+    /**
+     * Partials storage
+     *
+     * @var array
+     **/
+    protected $partials = array();
+
+    /**
+     * Data storage
+     *
+     * @var array
+     **/
+    protected $data = array();
+
+    /**
+     * Page content
+     *
+     * @var string
+     **/
+    protected $content = '';
+
+    /**
+     * local instance of CodeIgniter
+     *
+     * @var object
+     **/
+    private $ci;
+
+    // --------------------------------------------------------------------
+
+    /**
+     * constructor
+     *
+     * @access  public
+     * @param   void
+     * @return  void
+     **/
+    public function __construct($config = array())
+    {
+        $this->ci = get_instance();
+        if ( ! empty($config))
+        {
+            $this->initialize($config);
+        }
+        log_message('debug', get_class() . ' Library Initialized');
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * initialize config
+     *
+     * @access  public
+     * @param   array       $config
+     * @return  void
+     */
+    public function initialize($config = array())
     {
         if ( ! is_array($config))
         {
             return FALSE;
         }
-		foreach ($config as $name => $value)
-		{
+        foreach ($config as $name => $value)
+        {
             $this->__set($name, $value);
-		}
+        }
     }
 
     // --------------------------------------------------------------------
@@ -114,7 +114,7 @@ class Page {
     /**
      * __get
      *
-     * @access  public 
+     * @access  public
      * @param   string      $name
      * @return  mixed
      **/
@@ -132,11 +132,11 @@ class Page {
     }
 
     // --------------------------------------------------------------------
-    
+
     /**
      * __set
      *
-     * @access  public 
+     * @access  public
      * @param   string      $name
      * @param   mixed       $value
      * @return  void
@@ -153,13 +153,13 @@ class Page {
             $this->data($name, $value);
         }
     }
-    
+
     // --------------------------------------------------------------------
 
     /**
      * get page content
      *
-     * @access  protected 
+     * @access  protected
      * @param   void 
      * @return  string
      **/
@@ -167,13 +167,13 @@ class Page {
     {
         return $this->content;
     }
-    
+
     // --------------------------------------------------------------------
 
     /**
      * set new path to layout file
      *
-     * @access  protected 
+     * @access  protected
      * @param   string      $view
      * @return  void
      **/
@@ -195,7 +195,7 @@ class Page {
     /**
      * replace title with new string
      *
-     * @access  protected 
+     * @access  protected
      * @param   string      $title
      * @return  void
      **/
@@ -209,9 +209,9 @@ class Page {
     /**
      * set title or title segments
      *
-     * @access  protected 
+     * @access  protected
      * @param   mixed       $segs
-     * @param   bool        $replace 
+     * @param   bool        $replace
      * @return  object
      **/
     public function title($segs, $replace = FALSE)
@@ -233,8 +233,8 @@ class Page {
     /**
      * get title
      *
-     * @access  protected 
-     * @param   void 
+     * @access  protected
+     * @param   void
      * @return  string
      **/
     protected function get_title()
@@ -246,13 +246,13 @@ class Page {
         }
         return implode($this->title_separator, $segs);
     }
-    
+
     // --------------------------------------------------------------------
 
     /**
      * get/set partial
      *
-     * @access  public 
+     * @access  public
      * @param   string      $name
      * @param   string      $view
      * @param   array       $data
@@ -285,7 +285,7 @@ class Page {
     /**
      * get rendered partial
      *
-     * @access  protected 
+     * @access  protected
      * @param   string      $name
      * @return  string
      **/
@@ -343,7 +343,7 @@ class Page {
         {
             $this->data[$key] = $value;
         }
-        return $this; 
+        return $this;
     }
 
     // --------------------------------------------------------------------
@@ -363,7 +363,7 @@ class Page {
     // --------------------------------------------------------------------
 
     /**
-     * generate_title
+     * generate title based on uri segments
      *
      * @access  private 
      * @param   void 
@@ -371,7 +371,17 @@ class Page {
      **/
     private function generate_title()
     {
-        $this->title = 'generated title';
+        $segs = $this->ci->uri->segment_array();
+        if ($site_title = config_item('site_title'))
+        {
+            $segs[] = $site_title;
+        }
+        $this->ci->load->helper('inflector');
+        foreach ($segs as &$s)
+        {
+            $s = humanize($s); 
+        }
+        $this->title(array_reverse($segs));
     }
 
     // --------------------------------------------------------------------
@@ -399,10 +409,10 @@ class Page {
         // Cache bits imported from Phil Sturgeon's Template Lib
         $this->ci->output
             ->set_header('Expires: Sat, 01 Jan 2000 00:00:01 GMT')
-		    ->set_header('Cache-Control: no-store, no-cache, must-revalidate')
-		    ->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0')
-		    ->set_header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT' )
-		    ->set_header('Pragma: no-cache')
+            ->set_header('Cache-Control: no-store, no-cache, must-revalidate')
+            ->set_header('Cache-Control: post-check=0, pre-check=0, max-age=0')
+            ->set_header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT' )
+            ->set_header('Pragma: no-cache')
             ->cache($this->cache_lifetime)
             ;
         // build the requested output
