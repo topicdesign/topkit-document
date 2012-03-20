@@ -182,6 +182,7 @@ class Page {
         if (is_null($view))
         {
             $this->layout = NULL;
+            return;
         }
         if ( ! is_file(APPPATH.'views/'.$this->layout_dir.$view.'.php'))
         {

@@ -58,8 +58,7 @@ You can set the `title` property to a simple string.
     $this->page->title = 'My Awesome Site';
 
 Alternatively, you can pass multiple strings and allow the library to
-combine them on output using the specified `separator`. *You can toggle
-prepend/append via the config option.*
+combine them on output using the specified `separator`.
 
     // initialize the title (maybe in a hook)
     $this->page->title('Site Title');
@@ -85,21 +84,17 @@ the current contents by passing `TRUE` as a second parameter.
 
 ### Output the title
 
-Treat the built up `title` as a normal property on the `Page` object. 
+Treat the built up `title` as a normal property on the `Page` object.
+By default the segments that have been collected will be ordered in
+reverse, but you can toggle prepend/append via the config option.
   
     echo $this->page->title;
     // Article Title | News | Site Title
 
-### Clearing a title
-
-If you want to over-write any 'built up' title strings, just unset the
-`title` before setting it.
-
-    // title is all junked up
-    unset($this->page->title);
-
-    // now you're ready to start setting your first (only) new string
-    $this->page->title = 'All New Title';
+    $this->page->initialize(array('prepend_title'=>FALSE));
+    echo $this->page->title;
+    // Site Title | News | Article Title
+    
 
 ## Partials
 
@@ -138,8 +133,6 @@ allowing you to echo unset partials without fear of PHP errors.
     // no harm in echoing unset partials
     echo $this->page->partial('does_not_exist');
 
-    echo partial('footer');
-
 ## Passing Data to views/layouts
 
 CodeIgniter has a method for setting random data using
@@ -172,29 +165,6 @@ some situations to avoid variable collisions.
 
     $user = $this->page->data('user');
     echo $user->created->format('Y'); // 2012
-    
 
-# Document Properties
-
-**Work in Progress**
-
-The *Pages* package includes a generic `Document` model that map to
-URIs. When the `Page` library is instantiated, it attempts to populate
-it's primary properties automatically based on the current URI. It also provides a
-
-    CREATE TABLE `documents` (
-       `uri`            varchar(120)   NOT NULL,
-       `title`          varchar(120)   NOT NULL,
-       `slug`           varchar(120)   NOT NULL,
-       `description`    text           NOT NULL,
-       `keywords`       text           NOT NULL,
-       `content`        text           NOT NULL,
-       `view`           varchar(60)    NOT NULL,
-       `published_at`   datetime       DEFAULT NULL,
-       `created_at`     datetime       DEFAULT NULL,
-       `updated_at`     datetime       DEFAULT NULL,
-        PRIMARY KEY (`uri`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 [tk]: http://github.com/topicdesign/topkit
-
