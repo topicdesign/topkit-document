@@ -1,18 +1,14 @@
-topkit Pages Module
+topkit Page Module
 ====================
 
 ver:0.0.2
 
-The Pages module is a combination of a templating library and a
-dynamic page content generation tool. Elements of the templating
+The topkit Page module is a combination of a templating library
+and a general purpose data store. Elements of the templating
 portion of this package were inspired by the fine work of [Phil
 Sturgeon](https://github.com/philsturgeon/codeigniter-template).
 
-### Dependencies
-
-* [php-activerecord](https://github.com/topicdesign/php-activerecord-spark)
-
-Pages is designed as one of the core modules included in the
+This package is designed as one of the core modules included in the
 [topkit][tk] framework. It may work for your other projects, but that is
 not our intention.
 
@@ -23,7 +19,7 @@ It is recommended to auto-load the pages module.
     $autoload['packages'] = array(APPPATH.'third_party/pages');
     $autoload['libraries'] = array('page');
 
-The library will use the `config/pages.php` file be default, but you can
+The library will use the `config/page.php` file by default, but you can
 overload it.
 
     // pass a config variable to the constructor
@@ -36,11 +32,12 @@ overload it.
 
 | Parameter       | Default       | Description                                                    |
 | --------        | -------       | -----------                                                    |
-| layout_dir      | views/layouts | path to layouts directory (relative to APPPATH)                |
-| default_layout  | default       | file name of default layout file                               |
+| layout_dir      | layouts/      | path to layouts directory (relative to APPPATH/views)          |
+| layout          | default       | file name of default layout file                               |
 | title_separator | ' &#124; '    | string to use to separate concatenated titles                  |
 | prepend_title   | TRUE          | should new title strings be prepended                          |
 | extract_data    | TRUE          | should we extract the data to local variables in layouts/views |
+| cache_lifetime  | 0             | minutes that cache will be alive, use $CI->output->cache       |
 
 # Usage
 
@@ -55,7 +52,7 @@ You change which layout file to use in the build phase by setting a new path.
 
 You can set the `title` property to a simple string.
 
-    $this->page->title = 'My Awesome Site';
+    $this->page->title = 'My Example Site';
 
 Alternatively, you can pass multiple strings and allow the library to
 combine them on output using the specified `separator`.
@@ -79,17 +76,24 @@ By default, new strings are prepended to the title, but you can replace
 the current contents by passing `TRUE` as a second parameter.
 
     $this->page->title('Prepend Title');
-    $this->page->title('Replace Title', TRUE); 
+    $this->page->title('Replace Title', TRUE);
+
+Setting the title using the method can be chained.
+
+    $this->page->title('Admin')->layout = 'admin';
     
 
 ### Output the title
 
 Treat the built up `title` as a normal property on the `Page` object.
-By default the segments that have been collected will be ordered in
-reverse, but you can toggle prepend/append via the config option.
-  
+By default, the package assumes as you add more titles you are getting
+*more specific*, and that the output should be listed in reverse order.
+
     echo $this->page->title;
     // Article Title | News | Site Title
+
+You can choose to output the titles in the order they were entered by
+toggling the `prepend_title` parameter.
 
     $this->page->initialize(array('prepend_title'=>FALSE));
     echo $this->page->title;
@@ -103,7 +107,7 @@ files, or other views.
 
 ### Setting partials
 
-Typically you will be setting partials from view files, stored in the
+Typically you will be setting partials for view files, stored in the
 default `APPPATH.'views/'` directory.
 
     // create a partial called 'header'
@@ -185,5 +189,15 @@ some situations to avoid variable collisions.
     $user = $this->page->data('user');
     echo $user->created->format('Y'); // 2012
 
+Data stored in the `Page` object can also be accessed directly, so long
+as the name does not conflict with some protected properties.
+
+    $this->page->user = new User(1);
+    echo $this->page->user->full_name(); // John Smith
+
+    // some variable names are not accessible this way
+    $this->page->content= 'test';
+    echo $this->page->content; // outputs the content from $Page->build();
+    echo $this->page->data('content'); // 'test'
 
 [tk]: http://github.com/topicdesign/topkit

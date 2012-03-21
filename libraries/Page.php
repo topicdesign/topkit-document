@@ -232,7 +232,7 @@ class Page {
         {
             $this->title_segs = array();
         }
-        $this->title_segs = array_merge($this->title_segs, $segs);
+        $this->title_segs = array_merge($this->title_segs, array_reverse($segs));
         return $this;
     }
 
