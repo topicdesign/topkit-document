@@ -1,7 +1,7 @@
 topkit Page Module
 ====================
 
-ver:0.0.2
+ver:0.0.3
 
 The topkit Page module is a combination of a templating library
 and a general purpose data store. Elements of the templating
