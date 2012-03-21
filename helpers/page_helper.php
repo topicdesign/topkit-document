@@ -49,6 +49,25 @@ if ( ! function_exists('page_partial'))
 // --------------------------------------------------------------------
 
 /**
+ * get page metadata
+ *
+ * @access  public 
+ * @param   void
+ *
+ * @return  string
+ **/
+if ( ! function_exists('page_metadata'))
+{
+    function page_metadata()
+    {
+        $CI = get_instance();
+        return $CI->page->metadata;
+    }
+}
+
+// --------------------------------------------------------------------
+
+/**
  * get the page content
  *
  * @access  public 
