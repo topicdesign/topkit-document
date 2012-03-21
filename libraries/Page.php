@@ -49,6 +49,13 @@ class Page {
     protected $partials = array();
 
     /**
+     * Meta-Data storage
+     *
+     * @var array
+     **/
+    protected $metadata = array();
+
+    /**
      * Data storage
      *
      * @var array
@@ -306,6 +313,59 @@ class Page {
             $data = array_merge($this->data, $data);
         }
         return $this->ci->load->view($view, $data, TRUE);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * set/get metadata
+     *
+     * @access  public 
+     * @param   mixed       $lines
+     * @return  void
+     **/
+    public function metadata($lines = NULL)
+    {
+        if (is_null($lines))
+        {
+            return $this->get_metadata();
+        }
+        if (is_string($lines))
+        {
+            $lines = array($lines);
+        }
+        foreach ($lines as $l)
+        {
+            $this->set_metadata($l);
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * set_metadata
+     *
+     * @access  protected 
+     * @param   string      $str
+     * @return  void
+     **/
+    protected function set_metadata($str)
+    {
+       $this->metadata[] = $str; 
+    }
+    
+    // --------------------------------------------------------------------
+
+    /**
+     * get_metadata
+     *
+     * @access  protected 
+     * @param   
+     * @return  string
+     **/
+    protected function get_metadata()
+    {
+        return implode("\n", $this->metadata);
     }
 
     // --------------------------------------------------------------------
