@@ -1,7 +1,7 @@
 topkit Pages Module
 ====================
 
-ver:0.0.1
+ver:0.0.2
 
 The Pages module is a combination of a templating library and a
 dynamic page content generation tool. Elements of the templating
@@ -132,6 +132,25 @@ allowing you to echo unset partials without fear of PHP errors.
 
     // no harm in echoing unset partials
     echo $this->page->partial('does_not_exist');
+
+## Metadata
+
+You can store lines of `metadata` for output in your layout's `head`.
+Setting the object property will always append the new content, leaving
+existing content in the property.
+
+    // add a single line
+    $this->page->metadata = '<base href="http://example.com/">';
+
+    // or pass an array
+    $meta = array(
+        '<meta name="apple-mobile-web-app-capable" content="yes">',
+        '<meta name="apple-mobile-web-app-status-bar-style" content="black">'
+    );
+    $this->page->metadata($meta);
+
+    // output like a normal object property
+    echo $this->page->metadata;
 
 ## Passing Data to views/layouts
 
