@@ -112,7 +112,22 @@ class Page {
         }
         foreach ($config as $name => $value)
         {
-            $this->__set($name, $value);
+            $method = 'set_'.$name;
+            if (method_exists($this,$method))
+            {
+                return $this->$method($value);
+            }
+            else
+            {
+                if (isset($this->name)) 
+                {
+                    $property = new ReflectionProperty($this,$name);
+                    if ( ! $property->isPrivate()) 
+                    {
+                        $this->$name = $value;
+                    }
+                }
+            }
         }
     }
 
