@@ -115,7 +115,7 @@ class Page {
             $method = 'set_'.$name;
             if (method_exists($this,$method))
             {
-                return $this->$method($value);
+                $this->$method($value);
             }
             else
             {
