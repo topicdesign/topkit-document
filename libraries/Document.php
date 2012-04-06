@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Page Class
+ * Document Class
  *
  * Templating and Layout Abstraction
  *
@@ -13,7 +13,7 @@
  * @version     0.0.1
  */
 
-class Page {
+class Document {
 
     /*
     | -------------------------------------------------------------------------
@@ -115,7 +115,7 @@ class Page {
             $method = 'set_'.$name;
             if (method_exists($this,$method))
             {
-                $this->$method($value);
+                return $this->$method($value);
             }
             else
             {
