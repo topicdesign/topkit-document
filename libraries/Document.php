@@ -10,7 +10,7 @@
  * @category    Templating
  * @author      Topic Deisgn
  * @license     http://creativecommons.org/licenses/BSD/
- * @version     0.0.5
+ * @version     0.0.6
  */
 
 class Document {
@@ -115,14 +115,14 @@ class Document {
             $method = 'set_'.$name;
             if (method_exists($this,$method))
             {
-                return $this->$method($value);
+                $this->$method($value);
             }
             else
             {
-                if (isset($this->name)) 
+                if (isset($this->$name))
                 {
                     $property = new ReflectionProperty($this,$name);
-                    if ( ! $property->isPrivate()) 
+                    if ( ! $property->isPrivate())
                     {
                         $this->$name = $value;
                     }
