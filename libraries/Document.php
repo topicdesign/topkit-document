@@ -10,7 +10,7 @@
  * @category    Templating
  * @author      Topic Deisgn
  * @license     http://creativecommons.org/licenses/BSD/
- * @version     0.0.1
+ * @version     0.0.5
  */
 
 class Document {
@@ -23,7 +23,7 @@ class Document {
 
     protected $layout_dir = 'layouts/';
     protected $layout = 'default';
-    protected $title_separator = ' &#124; ';
+    protected $title_separator = ' | ';
     protected $prepend_title = TRUE;
     protected $extract_data = TRUE;
     protected $cache_lifetime = 0;
