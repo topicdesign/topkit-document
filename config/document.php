@@ -25,7 +25,7 @@ $config['layout'] = 'default';
  *
  * @var string
  **/
-$config['title_separator'] = ' &#124; ';
+$config['title_separator'] = ' | ';
 
 /**
  * should new title strings be prepended
