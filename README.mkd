@@ -1,32 +1,30 @@
-topkit Page Module
+topkit Document Library
 ====================
 
-ver:0.0.3
-
-The topkit Page module is a combination of a templating library
+The topkit Document library is a combination of a templating library
 and a general purpose data store. Elements of the templating
 portion of this package were inspired by the fine work of [Phil
 Sturgeon](https://github.com/philsturgeon/codeigniter-template).
 
-This package is designed as one of the core modules included in the
+This is designed as one of the core libraries included in the
 [topkit][tk] framework. It may work for your other projects, but that is
 not our intention.
 
 ### Initialization
 
-It is recommended to auto-load the pages module.
+It is recommended to auto-load the `Document` library.
 
-    $autoload['packages'] = array(APPPATH.'third_party/pages');
-    $autoload['libraries'] = array('page');
+    $autoload['packages'] = array(APPPATH.'third_party/document');
+    $autoload['libraries'] = array('document');
 
-The library will use the `config/page.php` file by default, but you can
+The library will use the `config/document.php` file by default, but you can
 overload it.
 
     // pass a config variable to the constructor
-    $this->load->library('page', $config);
+    $this->load->library('document', $config);
 
     // manually initialize
-    $this->page->initialize($config);
+    $this->document->initialize($config);
 
 ## Config
 
@@ -34,7 +32,7 @@ overload it.
 | --------        | -------       | -----------                                                    |
 | layout_dir      | layouts/      | path to layouts directory (relative to APPPATH/views)          |
 | layout          | default       | file name of default layout file                               |
-| title_separator | ' &#124; '    | string to use to separate concatenated titles                  |
+| title_separator | " | "         | string to use to separate concatenated titles                  |
 | prepend_title   | TRUE          | should new title strings be prepended                          |
 | extract_data    | TRUE          | should we extract the data to local variables in layouts/views |
 | cache_lifetime  | 0             | minutes that cache will be alive, use $CI->output->cache       |
@@ -46,57 +44,57 @@ overload it.
 You change which layout file to use in the build phase by setting a new path.
 
     // set the layout to 'views/layouts/simple.php'
-    $this->page->layout = 'simple';
+    $this->document->layout = 'simple';
 
 ## Title
 
 You can set the `title` property to a simple string.
 
-    $this->page->title = 'My Example Site';
+    $this->document->title = 'My Example Site';
 
 Alternatively, you can pass multiple strings and allow the library to
 combine them on output using the specified `separator`.
 
     // initialize the title (maybe in a hook)
-    $this->page->title('Site Title');
+    $this->document->title('Site Title');
 
     // get more specific in the controller
-    $this->page->title('News'); # News | Site Title
+    $this->document->title('News'); # News | Site Title
 
     // and really specific in the method
-    $this->page->title('Article Title'); # Article | News | Site Title
+    $this->document->title('Article Title'); # Article | News | Site Title
 
 You can also pass an array of strings, they will be inserted in the
 order provided.
 
-    $this->page->title(array('One', 'Two', 'Three'));
+    $this->document->title(array('One', 'Two', 'Three'));
     // One | Two | Three
 
 By default, new strings are prepended to the title, but you can replace
 the current contents by passing `TRUE` as a second parameter.
 
-    $this->page->title('Prepend Title');
-    $this->page->title('Replace Title', TRUE);
+    $this->document->title('Prepend Title');
+    $this->document->title('Replace Title', TRUE);
 
 Setting the title using the method can be chained.
 
-    $this->page->title('Admin')->layout = 'admin';
+    $this->document->title('Admin')->layout = 'admin';
     
 
 ### Output the title
 
-Treat the built up `title` as a normal property on the `Page` object.
+Treat the built up `title` as a normal property on the `Document` object.
 By default, the package assumes as you add more titles you are getting
 *more specific*, and that the output should be listed in reverse order.
 
-    echo $this->page->title;
+    echo $this->document->title;
     // Article Title | News | Site Title
 
 You can choose to output the titles in the order they were entered by
 toggling the `prepend_title` parameter.
 
-    $this->page->initialize(array('prepend_title'=>FALSE));
-    echo $this->page->title;
+    $this->document->initialize(array('prepend_title'=>FALSE));
+    echo $this->document->title;
     // Site Title | News | Article Title
     
 
@@ -111,16 +109,16 @@ Typically you will be setting partials for view files, stored in the
 default `APPPATH.'views/'` directory.
 
     // create a partial called 'header'
-    $this->page->partial('header', '_partials/header');
+    $this->document->partial('header', '_partials/header');
 
     // pass some data to the view
     $data = array('logged_in'=>TRUE);
-    $this->page->partial('footer', '_partials/footer', $data);
+    $this->document->partial('footer', '_partials/footer', $data);
 
 There may be times where you want to pass a string directly to a partial.
 
-    $this->page->partial('copy', '<span>&copy;'.date('Y').'</span>');
-    $this->page->partial('tweet', get_recent_tweet());
+    $this->document->partial('copy', '<span>&copy;'.date('Y').'</span>');
+    $this->document->partial('tweet', get_recent_tweet());
 
 ### Getting partials
 
@@ -129,13 +127,13 @@ assigned name. If the partial does not exist, it will return `FALSE`,
 allowing you to echo unset partials without fear of PHP errors.
 
     // output the contents of the partial
-    echo $this->page->partial('header');
+    echo $this->document->partial('header');
 
     // assign the partial to a new variable
-    $tweet = $this->page->partial('tweet');
+    $tweet = $this->document->partial('tweet');
 
     // no harm in echoing unset partials
-    echo $this->page->partial('does_not_exist');
+    echo $this->document->partial('does_not_exist');
 
 ## Metadata
 
@@ -144,38 +142,38 @@ Setting the object property will always append the new content, leaving
 existing content in the property.
 
     // add a single line
-    $this->page->metadata = '<base href="http://example.com/">';
+    $this->document->metadata = '<base href="http://example.com/">';
 
     // or pass an array
     $meta = array(
         '<meta name="apple-mobile-web-app-capable" content="yes">',
         '<meta name="apple-mobile-web-app-status-bar-style" content="black">'
     );
-    $this->page->metadata($meta);
+    $this->document->metadata($meta);
 
     // output like a normal object property
-    echo $this->page->metadata;
+    echo $this->document->metadata;
 
 ## Passing Data to views/layouts
 
 CodeIgniter has a method for setting random data using
 `$this->output->set_vars()`, and you can pass an array to the `partial`
-and `build` methods. As a convenience, the `Page` module also provides
+and `build` methods. As a convenience, the `Document` library also provides
 an interface for storing arbitrary data.
 
     // set any string key to any value
-    $this->page->data('username', 'John');
-    $this->page->data('user', $user);
+    $this->document->data('username', 'John');
+    $this->document->data('user', $user);
 
     // you can also pass arrays
     $user_data = array(
         'username'  => 'John',
         'user'      => $user
     );
-    $this->page->data($user_data);
+    $this->document->data($user_data);
 
 Any data set using this method is automatically extracted into rendered
-views for direct access. You can configure the `Page` module to **not**
+views for direct access. You can configure the `Document` library to **not**
 extract stored data into local variables, which may be preferable in
 some situations to avoid variable collisions.
 
@@ -183,21 +181,21 @@ some situations to avoid variable collisions.
     echo $username; // John
     echo $user->created->format('Y'); // 2012
 
-    // or you can access the data from the page object
-    echo $this->page->data('username'); // John
+    // or you can access the data from the document object
+    echo $this->document->data('username'); // John
 
-    $user = $this->page->data('user');
+    $user = $this->document->data('user');
     echo $user->created->format('Y'); // 2012
 
-Data stored in the `Page` object can also be accessed directly, so long
+Data stored in the `Document` object can also be accessed directly, so long
 as the name does not conflict with some protected properties.
 
-    $this->page->user = new User(1);
-    echo $this->page->user->full_name(); // John Smith
+    $this->document->user = new User(1);
+    echo $this->document->user->full_name(); // John Smith
 
     // some variable names are not accessible this way
-    $this->page->content= 'test';
-    echo $this->page->content; // outputs the content from $Page->build();
-    echo $this->page->data('content'); // 'test'
+    $this->document->content= 'test';
+    echo $this->document->content; // outputs the content from $Document->build();
+    echo $this->document->data('content'); // 'test'
 
 [tk]: http://github.com/topicdesign/topkit

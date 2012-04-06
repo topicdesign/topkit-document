@@ -18,12 +18,12 @@
  *
  * @return  string
  **/
-if ( ! function_exists('page_title'))
+if ( ! function_exists('document_title'))
 {
-    function page_title()
+    function document_title()
     {
         $CI = get_instance();
-        return $CI->page->title;
+        return $CI->document->title;
     }
 }
 
@@ -37,12 +37,12 @@ if ( ! function_exists('page_title'))
  *
  * @return  string
  **/
-if ( ! function_exists('page_partial'))
+if ( ! function_exists('document_partial'))
 {
-    function page_partial($name)
+    function document_partial($name)
     {
         $CI = get_instance();
-        return $CI->page->partial($name);
+        return $CI->document->partial($name);
     }
 }
 
@@ -56,12 +56,12 @@ if ( ! function_exists('page_partial'))
  *
  * @return  string
  **/
-if ( ! function_exists('page_metadata'))
+if ( ! function_exists('document_metadata'))
 {
-    function page_metadata()
+    function document_metadata()
     {
         $CI = get_instance();
-        return $CI->page->metadata;
+        return $CI->document->metadata;
     }
 }
 
@@ -75,12 +75,12 @@ if ( ! function_exists('page_metadata'))
  *
  * @return  string
  **/
-if ( ! function_exists('page_content'))
+if ( ! function_exists('document_content'))
 {
-    function page_content()
+    function document_content()
     {
         $CI = get_instance();
-        return $CI->page->content;
+        return $CI->document->content;
     }
 }
 
@@ -94,15 +94,15 @@ if ( ! function_exists('page_content'))
  *
  * @return  mixed
  **/
-if ( ! function_exists('page_data'))
+if ( ! function_exists('document_data'))
 {
-    function page_data($name)
+    function document_data($name)
     {
         $CI = get_instance();
-        return $CI->page->data($name);
+        return $CI->document->data($name);
     }
 }
 
 // ------------------------------------------------------------------------
-/* End of file page_helper.php */
-/* Location: ./helpers/page_helper.php */
+/* End of file document_helper.php */
+/* Location: ./helpers/document_helper.php */

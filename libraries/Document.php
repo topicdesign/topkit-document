@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Page Class
+ * Document Class
  *
  * Templating and Layout Abstraction
  *
@@ -10,10 +10,10 @@
  * @category    Templating
  * @author      Topic Deisgn
  * @license     http://creativecommons.org/licenses/BSD/
- * @version     0.0.1
+ * @version     0.0.5
  */
 
-class Page {
+class Document {
 
     /*
     | -------------------------------------------------------------------------
@@ -23,7 +23,7 @@ class Page {
 
     protected $layout_dir = 'layouts/';
     protected $layout = 'default';
-    protected $title_separator = ' &#124; ';
+    protected $title_separator = ' | ';
     protected $prepend_title = TRUE;
     protected $extract_data = TRUE;
     protected $cache_lifetime = 0;
@@ -112,7 +112,22 @@ class Page {
         }
         foreach ($config as $name => $value)
         {
-            $this->__set($name, $value);
+            $method = 'set_'.$name;
+            if (method_exists($this,$method))
+            {
+                return $this->$method($value);
+            }
+            else
+            {
+                if (isset($this->name)) 
+                {
+                    $property = new ReflectionProperty($this,$name);
+                    if ( ! $property->isPrivate()) 
+                    {
+                        $this->$name = $value;
+                    }
+                }
+            }
         }
     }
 
