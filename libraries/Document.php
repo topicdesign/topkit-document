@@ -448,7 +448,7 @@ class Document {
     private function generate_title()
     {
         $segs = $this->ci->uri->segment_array();
-        if ($site_title = config_item('site_title'))
+        if ($site_title = config_item('title', 'site'))
         {
             $segs[] = $site_title;
         }
