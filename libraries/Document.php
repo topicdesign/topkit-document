@@ -10,7 +10,7 @@
  * @category    Templating
  * @author      Topic Deisgn
  * @license     http://creativecommons.org/licenses/BSD/
- * @version     0.0.7
+ * @version     0.0.8
  */
 
 class Document {
@@ -21,12 +21,13 @@ class Document {
     | -------------------------------------------------------------------------
     */
 
-    protected $layout_dir = 'layouts/';
-    protected $layout = 'default';
+    protected $layout_dir      = 'layouts/';
+    protected $layout          = 'default';
     protected $title_separator = ' | ';
-    protected $prepend_title = TRUE;
-    protected $extract_data = TRUE;
-    protected $cache_lifetime = 0;
+    protected $prepend_title   = TRUE;
+    protected $extract_data    = TRUE;
+    protected $cache_lifetime  = 0;
+    protected $view_ext        = '.html';
 
     /*
     | -------------------------------------------------------------------------
@@ -182,7 +183,7 @@ class Document {
      * get page content
      *
      * @access  protected
-     * @param   void 
+     * @param   void
      * @return  string
      **/
     protected function get_content()
@@ -327,7 +328,7 @@ class Document {
         {
             $data = array_merge($this->data, $data);
         }
-        return $this->ci->load->view($view, $data, TRUE);
+        return $this->view($view, $data, TRUE);
     }
 
     // --------------------------------------------------------------------
@@ -335,7 +336,7 @@ class Document {
     /**
      * set/get metadata
      *
-     * @access  public 
+     * @access  public
      * @param   mixed       $lines
      * @return  void
      **/
@@ -360,22 +361,22 @@ class Document {
     /**
      * set_metadata
      *
-     * @access  protected 
+     * @access  protected
      * @param   string      $str
      * @return  void
      **/
     protected function set_metadata($str)
     {
-       $this->metadata[] = $str; 
+       $this->metadata[] = $str;
     }
-    
+
     // --------------------------------------------------------------------
 
     /**
      * get_metadata
      *
-     * @access  protected 
-     * @param   
+     * @access  protected
+     * @param
      * @return  string
      **/
     protected function get_metadata()
@@ -388,7 +389,7 @@ class Document {
     /**
      * get/set data to page object
      *
-     * @access  public 
+     * @access  public
      * @param   string      $name
      * @param   mixed       $value
      * @return  mixed
@@ -427,7 +428,7 @@ class Document {
     /**
      * get all page data
      *
-     * @access  protected 
+     * @access  protected
      * @param   void
      * @return  array
      **/
@@ -441,8 +442,8 @@ class Document {
     /**
      * generate title based on uri segments
      *
-     * @access  private 
-     * @param   void 
+     * @access  private
+     * @param   void
      * @return  void
      **/
     private function generate_title()
@@ -455,7 +456,7 @@ class Document {
         $this->ci->load->helper('inflector');
         foreach ($segs as &$s)
         {
-            $s = humanize($s); 
+            $s = humanize($s);
         }
         $this->title(array_reverse($segs));
     }
@@ -463,9 +464,30 @@ class Document {
     // --------------------------------------------------------------------
 
     /**
+     * load a view, specify the extension if not present
+     *
+     * @access  public
+     * @param   string    $view
+     * @param   array     $data
+     * @param   bool      $return
+     * @return  mixed
+     **/
+    public function view($view, $data = array(), $return = FALSE)
+    {
+        $file = substr($view, strrpos($view, '/'));
+        if ( ! strpos($file, '.'))
+        {
+            $view .= $this->view_ext;
+        }
+        return $this->ci->load->view($view, $data, $return);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
      * build the final output
      *
-     * @access  public 
+     * @access  public
      * @param   string      $view
      * @param   array       $data
      * @param   bool        $return
@@ -492,11 +514,11 @@ class Document {
             ->cache($this->cache_lifetime)
             ;
         // build the requested output
-        $output = $this->content = $this->ci->load->view($view, $data, TRUE);
+        $output = $this->content = $this->view($view, $data, TRUE);
         // wrap in a layout?
         if ($this->layout)
         {
-            $output = $this->ci->load->view($this->layout_dir.$this->layout, NULL, TRUE);
+            return $this->view($this->layout_dir.$this->layout, NULL, $return);
         }
         // returned as string or output to browser
         if ($return)
