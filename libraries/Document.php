@@ -10,7 +10,7 @@
  * @category    Templating
  * @author      Topic Deisgn
  * @license     http://creativecommons.org/licenses/BSD/
- * @version     0.0.7
+ * @version     0.0.8
  */
 
 class Document {
