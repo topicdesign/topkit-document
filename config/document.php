@@ -48,6 +48,13 @@ $config['extract_data'] = TRUE;
  **/
 $config['cache_lifetime'] = 0;
 
+/**
+ * file extentions for views
+ *
+ * @var string
+ **/
+$config['view_ext'] = '.html';
+
 // --------------------------------------------------------------------
 /* End of file pages.php */
 /* Location: ./third_party/pages/config/pages.php */
