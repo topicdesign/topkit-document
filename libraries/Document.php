@@ -10,7 +10,7 @@
  * @category    Templating
  * @author      Topic Deisgn
  * @license     http://creativecommons.org/licenses/BSD/
- * @version     0.0.8
+ * @version     0.0.9
  */
 
 class Document {
@@ -207,11 +207,18 @@ class Document {
             $this->layout = NULL;
             return;
         }
-        if ( ! is_file(APPPATH.'views/'.$this->layout_dir.$view.'.php'))
+        $orig_view = $view;
+        $file = substr($view, strrpos($view, '/'));
+        if ( ! strpos($file, '.'))
+        {
+            $view .= $this->view_ext;
+        }
+
+        if ( ! is_file(APPPATH.'views/'.$this->layout_dir.$view))
         {
             return;
         }
-        $this->layout = $view;
+        $this->layout = $orig_view;
     }
 
     // --------------------------------------------------------------------
@@ -290,7 +297,13 @@ class Document {
         }
         // determine if passed view or injecting string
         $lines = explode(PHP_EOL, $view);
-        if (count($lines) == 1 && is_file(APPPATH.'views/'.$lines[0].'.php'))
+        $filepath = $lines[0];
+        $file = substr($filepath, strrpos($filepath, '/'));
+        if ( ! strpos($file, '.'))
+        {
+            $filepath .= $this->view_ext;
+        }
+        if (count($lines) == 1 && is_file(APPPATH.'views/'.$filepath))
         {
             $this->partials[$name] = array(
                 'view'  => $view,
