@@ -275,7 +275,7 @@ class Document {
         {
             $segs = array_reverse($segs);
         }
-        return implode($this->title_separator, $segs);
+        return implode($this->title_separator, array_unique($segs));
     }
 
     // --------------------------------------------------------------------
